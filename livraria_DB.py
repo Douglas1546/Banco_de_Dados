@@ -84,18 +84,14 @@ class CRUD_cliente():
 
     def pesquisarCliente():
         print("\n================Pesquisar Cliente================\n")
-        
         op = input("\n 1 - Pesquisar por ID \n 2 - Pesquisar por nome \n\n Digite a opção desejada: ")
         while True:
             if op == '1':
-                print("qualquer coisa")
-                break
-            elif op == '2':
-                pesquisar = input("Digite o nome do cliente que deseja pesquisar: ")
-                sql = f'SELECT * FROM clientes WHERE nome_cliente LIKE %s' #READ
-                valores = ('%' + pesquisar + '%',) # É necessário adicionar o caractere '%' antes e depois do valor da variável, indicando que podem haver quaisquer caracteres antes e depois da sequência de caracteres buscada.
+                pesquisar = input("Digite o ID que você deseja pesquisar: ")
+                sql = f'SELECT * FROM clientes WHERE idClientes LIKE %s' #READ
+                valores = (pesquisar,)
                 cursor.execute(sql, valores)
-                resultado = cursor.fetchall() # o cursor.fetchall ja retorna uma lista para a variavel resultado, então não preciso jogar a variavel resultado dentro de uma lista
+                resultado = cursor.fetchall()
                 print("\n================ Cliente encontrado ================\n")
                 print("\nID: ",resultado[0][0])
                 print("\nNome do cliente: ",resultado[0][1])
@@ -104,6 +100,22 @@ class CRUD_cliente():
                 print("\nTelefone do cliente: ",resultado[0][4])
                 print("\n==================================================\n")
                 break
+            elif op == '2':
+                pesquisar = input("Digite o nome do cliente que deseja pesquisar: ")
+                sql = f'SELECT * FROM clientes WHERE nome_cliente LIKE %s' #READ
+                valores = ('%' + pesquisar + '%',) # É necessário adicionar o caractere '%' antes e depois do valor da variável, indicando que podem haver quaisquer caracteres antes e depois da sequência de caracteres buscada.
+                cursor.execute(sql, valores)
+                resultado = cursor.fetchall() # o cursor.fetchall ja retorna uma lista para a variavel resultado, então não preciso jogar a variavel resultado dentro de uma lista
+                for result in resultado:
+                    print("\n================ Cliente encontrado ================\n")
+                    print("\nID: ",result[0])
+                    print("\nNome do cliente: ",result[1])
+                    print("\nCPF do cliente: ",result[2])
+                    print("\nEmail do cliente: ",result[3])
+                    print("\nTelefone do cliente: ",result[4])
+                    print("\n==================================================\n")
+                break
+
     def gerarRelatorioClientes():
         os.system('cls')
         print("\n================ Relatório dos clientes ================\n")
@@ -190,17 +202,36 @@ class CRUD_livros():
         print(f"\nLivro com ID [{id}] removido com sucesso!")
 
     def pesquisarLivro():
-        pesquisar = input("Digite o nome do livro que deseja pesquisar: ")
-        sql = f'SELECT * FROM livros WHERE nome_livro LIKE %s ' #READ
-        valores = ('%' + pesquisar + '%',) 
-        cursor.execute(sql, valores)
-        resultado = cursor.fetchall()
-        print("\n================ Livro encontrado ================\n")
-        print("\nID: ",resultado[0][0])
-        print("\nNome do livro: ",resultado[0][1])
-        print("\nPreço R$: ",resultado[0][2])
-        print("\nQuantidade disponível: ",resultado[0][3])
-        print("\n==================================================\n")
+        print("\n================Pesquisar Livro================\n")
+        op = input("\n 1 - Pesquisar por ID \n 2 - Pesquisar por nome \n\n Digite a opção desejada: ")
+        while True:
+            if op == '1':
+                pesquisar = input("Digite o ID do livro que deseja pesquisar: ")
+                sql = f'SELECT * FROM livros WHERE id_livro LIKE %s ' #READ
+                valores = (pesquisar,) 
+                cursor.execute(sql, valores)
+                resultado = cursor.fetchall()
+                print("\n================ Livro encontrado ================\n")
+                print("\nID: ",resultado[0][0])
+                print("\nNome do livro: ",resultado[0][1])
+                print("\nPreço R$: ",resultado[0][2])
+                print("\nQuantidade disponível: ",resultado[0][3])
+                print("\n==================================================\n")
+                break
+            elif op == '2':
+                pesquisar = input("Digite o nome do livro que deseja pesquisar: ")
+                sql = f'SELECT * FROM livros WHERE nome_livro LIKE %s ' #READ
+                valores = ('%' + pesquisar + '%',) 
+                cursor.execute(sql, valores)
+                resultado = cursor.fetchall()
+                for result in resultado:
+                    print("\n================ Livro encontrado ================\n")
+                    print("\nID: ",result[0])
+                    print("\nNome do livro: ",result[1])
+                    print(f"\nPreço R$: {round(result[2], 2)}")
+                    print("\nQuantidade disponível: ",result[3])
+                    print("\n==================================================\n")
+                break
 
     def gerarRelatorioEstoque():
         os.system('cls')
@@ -235,16 +266,14 @@ while True:
     print("3 -  Pesquisar cliente")
     print("4 -  Remover Cliente")
     print("5 -  Listar todos os clientes cadastrados")
-    print("6 -  Exibir um cliente") # mesma coisa de pesquisar cliente
 
-    print("7 -  Cadastrar Livro")
-    print("8 -  Alterar cadastro do livro")
-    print("9 -  Pesquisar Livro")
-    print("10 - Remover Livro")
-    print("11 - Listar todos os Livros cadastrados")
-    print("12 - Exibir um Livro") # mesma coisa de pesquisar livro
+    print("6 -  Cadastrar Livro")
+    print("7 -  Alterar cadastro do livro")
+    print("8 -  Pesquisar Livro")
+    print("9 - Remover Livro")
+    print("10 - Listar todos os Livros cadastrados")
 
-    print("13 - Gerar relatório")
+    print("11 - Gerar relatório")
 
     print("\n0 -  Sair")
 
@@ -260,21 +289,17 @@ while True:
         CRUD_cliente.deleteCliente() # DELETE
     elif opcao == "5":
         CRUD_cliente.exibirClientes() # READ
-    #elif opcao == "6":
-    #    print("Você escolheu a opção 6") # mesma coisa de pesquisar cliente
-    elif opcao == "7":
+    elif opcao == "6":
         CRUD_livros.cadastrarLivro()
-    elif opcao == "8":
+    elif opcao == "7":
         CRUD_livros.alterarCadastroLivro()
-    elif opcao == "9":
+    elif opcao == "8":
         CRUD_livros.pesquisarLivro()
-    elif opcao == "10":
+    elif opcao == "9":
         CRUD_livros.deleteLivro()
-    elif opcao == "11":
+    elif opcao == "10":
         CRUD_livros.exibirLivros()
-    #elif opcao == "12":
-    #    print("Você escolheu a opção 12") # mesma coisa de pesquisar livro
-    elif opcao == '13':
+    elif opcao == '11':
         os.system('cls')
         while True:
             print("\n 1 - Gerar relatório do estoque \n 2 - Gerar relatório dos clientes")
