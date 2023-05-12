@@ -88,7 +88,7 @@ class CRUD_cliente():
         op = input("\n 1 - Pesquisar por ID \n 2 - Pesquisar por nome \n\n Digite a opção desejada: ")
         while True:
             if op == '1':
-                
+                print("qualquer coisa")
                 break
             elif op == '2':
                 pesquisar = input("Digite o nome do cliente que deseja pesquisar: ")
