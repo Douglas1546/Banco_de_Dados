@@ -270,7 +270,7 @@ while True:
     print("6 -  Cadastrar Livro")
     print("7 -  Alterar cadastro do livro")
     print("8 -  Pesquisar Livro")
-    print("9 - Remover Livro")
+    print("9 -  Remover Livro")
     print("10 - Listar todos os Livros cadastrados")
 
     print("11 - Gerar relatório")
