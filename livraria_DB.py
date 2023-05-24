@@ -3,9 +3,9 @@ import os
 
 conexao = mysql.connector.connect(
     host = 'localhost',
-    user = 'root',
-    password = '@Refri198',
-    database = 'bd_livraria',
+    user = 'yasmin',
+    password = 'Senha@123',
+    database = 'livraria_bd',
 )
 
 cursor = conexao.cursor(prepared=True)
@@ -23,14 +23,14 @@ class CRUD_cliente():
         cliente = CRUD_cliente(input("Digite o nome do cliente: "), input("Digite o CPF do cliente: "), input("Digite o email do cliente: "), input("Digite o telefone do cliente: "))
         print("Cliente [",cliente.nome,"], CPF [", cliente.cpf, "], Email [",cliente.email,"], Telefone [", cliente.telefone, "] Cadastrado")
 
-        sql = f'INSERT INTO clientes (nome_cliente, cpf, email, telefone) VALUES (%s, %s, %s, %s)' # CREATE - Insere elementos na tabela
+        sql = f'INSERT INTO Cliente (nome, cpf, email, telefone) VALUES (%s, %s, %s, %s)' # CREATE - Insere elementos na tabela
         valores = (cliente.nome, cliente.cpf, cliente.email, cliente.telefone)
         cursor.execute(sql, valores) # executa o comando sql
         conexao.commit() 
 
     def exibirClientes():
         os.system('cls')
-        sql = f'SELECT * FROM clientes' #READ
+        sql = f'SELECT * FROM Cliente' #READ
         cursor.execute(sql)
         resultado = cursor.fetchall() 
         print("\n================Clientes Registrados================\n")
@@ -46,28 +46,28 @@ class CRUD_cliente():
         while True:
             if op == "1":
                 atlz_nome = input("Digite o nome atualizado: ")
-                sql = f'UPDATE clientes SET nome_cliente = %s WHERE idClientes = %s' #UPDATE
+                sql = f'UPDATE Cliente SET nome = %s WHERE id = %s' #UPDATE
                 valores = (atlz_nome, id)
                 cursor.execute(sql, valores)
                 conexao.commit()
                 break
             elif op == "2":
                 atlz_cpf = input("Digite o cpf atualizado: ")
-                sql = f'UPDATE clientes SET cpf = %s WHERE idClientes = %s' # UPDATE
+                sql = f'UPDATE Cliente SET cpf = %s WHERE id = %s' # UPDATE
                 valores = (atlz_cpf, id)
                 cursor.execute(sql, valores)
                 conexao.commit() 
                 break
             elif op == "3":
                 atlz_email = input("Digite email atualizado: ")
-                sql = f'UPDATE clientes SET email = %s WHERE idClientes = %s' # UPDATE
+                sql = f'UPDATE Cliente SET email = %s WHERE id = %s' # UPDATE
                 valores = (atlz_email, id)
                 cursor.execute(sql, valores)
                 conexao.commit() 
                 break
             elif op == "4":
                 atlz_tel = input("Digite o telefone atualizado: ")
-                sql = f'UPDATE clientes SET telefone = %s WHERE idClientes = %s' # UPDATE
+                sql = f'UPDATE Cliente SET telefone = %s WHERE id = %s' # UPDATE
                 valores = (atlz_tel, id)
                 cursor.execute(sql, valores)
                 conexao.commit() 
@@ -76,7 +76,7 @@ class CRUD_cliente():
     def deleteCliente():
         print("\n================Remover cadastro do cliente================\n")
         id = input("Digite o [ID] do cliente que voce deseja remover:")
-        sql = f'DELETE FROM clientes WHERE idClientes = %s ' # DELETE
+        sql = f'DELETE FROM Cliente WHERE id = %s ' # DELETE
         valores = (id,)
         cursor.execute(sql, valores)
         conexao.commit() 
@@ -88,7 +88,7 @@ class CRUD_cliente():
         while True:
             if op == '1':
                 pesquisar = input("Digite o ID que você deseja pesquisar: ")
-                sql = f'SELECT * FROM clientes WHERE idClientes LIKE %s' #READ
+                sql = f'SELECT * FROM Cliente WHERE id LIKE %s' #READ
                 valores = (pesquisar,)
                 cursor.execute(sql, valores)
                 resultado = cursor.fetchall()
@@ -102,7 +102,7 @@ class CRUD_cliente():
                 break
             elif op == '2':
                 pesquisar = input("Digite o nome do cliente que deseja pesquisar: ")
-                sql = f'SELECT * FROM clientes WHERE nome_cliente LIKE %s' #READ
+                sql = f'SELECT * FROM Cliente WHERE nome LIKE %s' #READ
                 valores = ('%' + pesquisar + '%',) # É necessário adicionar o caractere '%' antes e depois do valor da variável, indicando que podem haver quaisquer caracteres antes e depois da sequência de caracteres buscada.
                 cursor.execute(sql, valores)
                 resultado = cursor.fetchall() # o cursor.fetchall ja retorna uma lista para a variavel resultado, então não preciso jogar a variavel resultado dentro de uma lista
@@ -119,7 +119,7 @@ class CRUD_cliente():
     def gerarRelatorioClientes():
         os.system('cls')
         print("\n================ Relatório dos clientes ================\n")
-        sql = f'SELECT * FROM clientes' #READ
+        sql = f'SELECT * FROM Cliente' #READ
         cursor.execute(sql)
         resultado = cursor.fetchall()
 
@@ -134,29 +134,29 @@ class CRUD_cliente():
         for nomes, cpfs, emails, telefones in dados:
             print("Nome:", nomes,"| CPF:", cpfs,"| Email:", emails,"| Telefone:", telefones)
         ##################################################################################################
-        qtd_cadastrado = len(resultado)
-        print("\nQuantidade de usuarios cadastrados no sistema: ", qtd_cadastrado)
+        quantidade_cadastrado = len(resultado)
+        print("\nQuantidade de usuarios cadastrados no sistema: ", quantidade_cadastrado)
         print("\n==================================================\n")
 #====================================================================================================================#
 class CRUD_livros():
-    def __init__(self, nome_livro, preco, qtd):
-        self.nome_livro = nome_livro
+    def __init__(self, nome, preco, quantidade):
+        self.nome = nome
         self.preco = preco
-        self.qtd = qtd
+        self.quantidade = quantidade
 
     def cadastrarLivro(): #CREATE
         os.system('cls')
         livro = CRUD_livros(input("Digite o nome do livro: "), input("Digite o preço: "), input("Digite a quantidade: "))
-        print("Livro de nome [",livro.nome_livro,"], preco [", livro.preco, "] e quantidade [",livro.qtd,"] Cadastrado")
+        print("Livro de nome [",livro.nome,"], preco [", livro.preco, "] e quantidade [",livro.quantidade,"] Cadastrado")
 
-        sql = f'INSERT INTO livros (nome_livro, preço, quantidade) VALUES (%s, %s, %s)' # CREATE
-        valores = (livro.nome_livro, livro.preco, livro.qtd)
+        sql = f'INSERT INTO Livro (nome, preco, quantidade) VALUES (%s, %s, %s)' # CREATE
+        valores = (livro.nome, livro.preco, livro.quantidade)
         cursor.execute(sql, valores)
         conexao.commit() 
 
     def exibirLivros():
         os.system('cls')
-        sql = f'SELECT * FROM livros' #READ
+        sql = f'SELECT * FROM Livro' #READ
         cursor.execute(sql)
         resultado = cursor.fetchall()
         print("\n================ Livros Registrados ================\n")
@@ -171,23 +171,23 @@ class CRUD_livros():
         op = input("\nDigite o numero referente ao que voce deseja alterar no cadastro do livro: ")
         while True:
             if op == "1":
-                atlz_nome_livro = input("Digite o nome do livro atualizado: ")
-                sql = f'UPDATE livros SET nome_livro = %s WHERE id_livro = %s' #UPDATE
-                valores = (atlz_nome_livro, id)
+                atlz_nome = input("Digite o nome do livro atualizado: ")
+                sql = f'UPDATE Livro SET nome = %s WHERE id = %s' #UPDATE
+                valores = (atlz_nome, id)
                 cursor.execute(sql, valores)
                 conexao.commit() 
                 break
             elif op == "2":
                 atlz_preco = input("Digite o preço atualizado: ")
-                sql = f'UPDATE livros SET preço = %s WHERE id_livro = %s'
+                sql = f'UPDATE Livro SET preco = %s WHERE id = %s'
                 valores = (atlz_preco, id)
                 cursor.execute(sql, valores)
                 conexao.commit() 
                 break
             elif op == "3":
-                atlz_qtd = input("Digite a quantidade atualizada disponível: ")
-                sql = f'UPDATE livros SET quantidade = %s WHERE id_livro = %s' 
-                valores = (atlz_qtd, id)
+                atlz_quantidade = input("Digite a quantidade atualizada disponível: ")
+                sql = f'UPDATE Livro SET quantidade = %s WHERE id = %s' 
+                valores = (atlz_quantidade, id)
                 cursor.execute(sql, valores)
                 conexao.commit() 
                 break
@@ -195,7 +195,7 @@ class CRUD_livros():
     def deleteLivro():
         print("\n================ Remover cadastro do cliente ================\n")
         id = input("Digite o [ID] do livro que voce deseja remover:")
-        sql = f'DELETE FROM livros WHERE id_livro = %s' # DELETE
+        sql = f'DELETE FROM Livro WHERE id = %s' # DELETE
         valores = (id,)
         cursor.execute(sql, valores)
         conexao.commit() 
@@ -207,20 +207,20 @@ class CRUD_livros():
         while True:
             if op == '1':
                 pesquisar = input("Digite o ID do livro que deseja pesquisar: ")
-                sql = f'SELECT * FROM livros WHERE id_livro LIKE %s ' #READ
+                sql = f'SELECT * FROM Livro WHERE id LIKE %s ' #READ
                 valores = (pesquisar,) 
                 cursor.execute(sql, valores)
                 resultado = cursor.fetchall()
                 print("\n================ Livro encontrado ================\n")
                 print("\nID: ",resultado[0][0])
                 print("\nNome do livro: ",resultado[0][1])
-                print("\nPreço R$: ",resultado[0][2])
+                print("\nPreço R$: ", str(round(resultado[0][2], 2)))
                 print("\nQuantidade disponível: ",resultado[0][3])
                 print("\n==================================================\n")
                 break
             elif op == '2':
                 pesquisar = input("Digite o nome do livro que deseja pesquisar: ")
-                sql = f'SELECT * FROM livros WHERE nome_livro LIKE %s ' #READ
+                sql = f'SELECT * FROM Livro WHERE nome LIKE %s ' #READ
                 valores = ('%' + pesquisar + '%',) 
                 cursor.execute(sql, valores)
                 resultado = cursor.fetchall()
@@ -236,24 +236,24 @@ class CRUD_livros():
     def gerarRelatorioEstoque():
         os.system('cls')
         print("\n================ Relatório do estoque ================\n")
-        sql = f'SELECT * FROM livros' #READ
+        sql = f'SELECT * FROM Livro' #READ
         cursor.execute(sql)
         resultado = cursor.fetchall()
 
         print("\n-Nome e quantidade de cada livro armazenado no estoque-\n")
         nome = [coluna[1] for coluna in resultado] # pega somente os nomes da coluna 1 e armazena em nomes
-        qtd_cada_livro = [coluna[3] for coluna in resultado] # pega os valores da coluna 3 e armazena em qtd_cada_livro
+        quantidade_cada_livro = [coluna[3] for coluna in resultado] # pega os valores da coluna 3 e armazena em quantidade_cada_livro
         
-        dados = list(zip(nome, qtd_cada_livro)) # combina as duas listas acima em uma lista de tuplas
-        for nomes, qtd in dados:
-            print("Livro:", nomes,"| Quantidade em estoque:", qtd)
+        dados = list(zip(nome, quantidade_cada_livro)) # combina as duas listas acima em uma lista de tuplas
+        for nomes, quantidade in dados:
+            print("Livro:", nomes,"| Quantidade em estoque:", quantidade)
         ##################################################################################################
         print("\n------------------Resumo------------------\n")
-        qtd_cadastrado = len(resultado) 
+        quantidade_cadastrado = len(resultado) 
         valor_total = sum(coluna[2] * coluna[3] for coluna in resultado) # pega todos os valores das colunas 2(preço) e 3(quantidade), realiza a multiplicação (preço x quantidade)
                                                                          # e depois soma tudo para obter o valor total do estoque
         total_livros = sum(coluna[3] for coluna in resultado)
-        print("Quantidade de livros diferentes cadastrados: ", qtd_cadastrado)
+        print("Quantidade de livros diferentes cadastrados: ", quantidade_cadastrado)
         print("Quantidade total de livros em estoque: ", total_livros)
         print(f'Valor total dos itens armazenados no estoque R$: {round(valor_total, 2)}')
         print("\n==================================================\n")
