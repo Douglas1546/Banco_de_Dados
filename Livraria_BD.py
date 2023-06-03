@@ -17,7 +17,7 @@ def login_screen():
 @app.route('/login_usuario', methods=['POST'])
 def login_usuario():
     nome = request.form['nome_cliente']
-    senha = request.form['senha_cliente']
+    senha = request.form['senha_cliente'] 
 
     conexao = mysql.connector.connect(
         host = 'localhost',
