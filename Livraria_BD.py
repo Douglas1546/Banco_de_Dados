@@ -383,7 +383,7 @@ def pagina_gerarRelatorio():
     return render_template("Pages_admin/Gerar_relatorio.html")
 
 
-@app.route("/exibir_relatorio") #READ
+@app.route("/exibir_relatorio") #READ 
 def exibirRelatorio():
     conexao = mysql.connector.connect(
         host = 'localhost',
