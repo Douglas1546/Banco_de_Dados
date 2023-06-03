@@ -36,7 +36,16 @@
         <form method="POST" action="/submit_livro">
             <input type="text" required name="nome_livro" placeholder="Nome do Livro"><br>
             <input type="text" required name="preco_livro" placeholder="Preço"><br>
+            <input type="text" required name="local_fabric" placeholder="Local de fabricação"><br>
             <input type="text" required name="quantidade_livro" placeholder="Quantidade"><br>
+            <fieldset>
+                <legend>Seleciona a categoria do livro</legend>
+                <select name="categoria_livro">
+                    <option value="1">Fantasia</option>
+                    <option value="2">Ficção científica</option>
+                    <option value="3">Educação</option>
+                </select>
+            </fieldset>
             <button type="submit">Enviar</button>
         </form>
         <style>

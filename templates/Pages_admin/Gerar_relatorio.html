@@ -68,8 +68,15 @@
                         <th>ID</th><td>{{ clientes[0] }}</td>
                         <th>Nome</th><td>{{ clientes[1] }}</td>
                         <th>CPF</th><td>{{ clientes[2] }}</td>
-                        <th>Email</th><td>{{ clientes[3] }}</td>
-                        <th>Telefone</th><td>{{ clientes[4] }}</td>
+                        <th>Telefone</th><td>{{ clientes[3] }}</td>
+                        <th>Email</th><td>{{ clientes[4] }}</td>
+                        <th>Possuem desconto na loja</th>
+                            <td>{% if clientes[5] == 1 %}
+                                    Sim
+                                {% elif clientes[5] == 0 %}
+                                    Não
+                                {% endif %}
+                            </td>
                     </tr>
                 {% endfor %}
                 <!------------Livros------------>
@@ -77,9 +84,19 @@
                 {% for livros in livro %}
                     <tr>
                         <th>ID</th><td>{{ livros[0] }}</td>
-                        <th>Nome</th><td colspan="3">{{ livros[1] }}</td>
-                        <th>Preço</th><td>R$ {{ livros[2] }}</td>
-                        <th>Quantidade</th><td>{{ livros[3] }}</td>
+                        <th>Categoria</th>
+                            <td>{% if livros[1] == 1 %}
+                                Fantasia
+                            {%elif livros[1] == 2%}
+                                Ficção Científica
+                            {%elif livros[1] == 3%}
+                                Educação
+                            {% endif %}
+                            </td>
+                        <th>Nome</th><td colspan="3">{{ livros[2] }}</td>
+                        <th>Preço</th><td>R$ {{ livros[3] }}</td>
+                        <th>Fabricação</th><td>{{ livros[4] }}</td>
+                        <th>Quantidade</th><td>{{ livros[5] }}</td>
                     </tr>
                 {% endfor %}
                 

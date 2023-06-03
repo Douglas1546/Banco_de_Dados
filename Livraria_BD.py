@@ -27,7 +27,7 @@ def login_usuario():
     )
     
     cursor = conexao.cursor(prepared=True)
-    sql = f'SELECT * FROM clientes WHERE nome_cliente = %s AND cpf = %s '
+    sql = f'SELECT * FROM cliente WHERE nome = %s AND cpf = %s '
     valores = (nome, senha)
     cursor.execute(sql, valores)
     resultado = cursor.fetchall() # Ler o banco de dados
@@ -54,8 +54,14 @@ def pagina_cadastrarCliente():
 def submit_cliente():
     name = request.form['nome_cliente']
     cpf = request.form['cpf_cliente']
-    email = request.form['email_cliente']
     telefone = request.form['telefone_cliente']
+    email = request.form['email_cliente']
+    cidade = request.form['cidade_cliente'].lower()
+
+    if cidade == 'sousa':
+        desconto = True
+    else:
+        desconto = False
 
     conexao = mysql.connector.connect(
         host = 'localhost',
@@ -65,8 +71,8 @@ def submit_cliente():
     )
 
     cursor = conexao.cursor(prepared=True)
-    sql = f'INSERT INTO clientes (nome_cliente, cpf, email, telefone) VALUES (%s, %s, %s, %s)'
-    valores = (name, cpf, email, telefone)
+    sql = f'INSERT INTO cliente (nome, cpf, telefone, email, is_desconto) VALUES (%s, %s, %s, %s, %s)'
+    valores = (name, cpf, telefone, email, desconto)
     cursor.execute(sql, valores)
     conexao.commit()
     conexao.close()
@@ -99,8 +105,14 @@ def pagina_cadastrarCliente_admin():
 def submit_admin():
     name = request.form['nome_cliente']
     cpf = request.form['cpf_cliente']
-    email = request.form['email_cliente']
     telefone = request.form['telefone_cliente']
+    email = request.form['email_cliente']
+    cidade = request.form['cidade_cliente'].lower()
+
+    if cidade == 'sousa':
+        desconto = True
+    else:
+        desconto = False
 
     conexao = mysql.connector.connect(
         host = 'localhost',
@@ -110,8 +122,8 @@ def submit_admin():
     )
     
     cursor = conexao.cursor(prepared=True)
-    sql = f'INSERT INTO clientes (nome_cliente, cpf, email, telefone) VALUES (%s, %s, %s, %s)'
-    valores = (name, cpf, email, telefone)
+    sql = f'INSERT INTO cliente (nome, cpf, telefone, email, is_desconto) VALUES (%s, %s, %s, %s, %s)'
+    valores = (name, cpf, telefone, email, desconto)
     cursor.execute(sql, valores)
     conexao.commit()
     conexao.close()
@@ -130,6 +142,12 @@ def alterar_cadastro_cliente():
     cpf_atlz = request.form['cpf_atlzd']
     email_atlz = request.form['email_atlzd']
     telefone_atlz = request.form['telefone_atlzd']
+    cidade_atlz = request.form['cidade_atlz'].lower()
+
+    if cidade_atlz == 'sousa':
+        desconto_atlz = True
+    else:
+        desconto_atlz = False
 
 
     conexao = mysql.connector.connect(
@@ -139,8 +157,8 @@ def alterar_cadastro_cliente():
         database = 'bd_livraria',
     )
     cursor = conexao.cursor(prepared=True)
-    comando = f'UPDATE clientes SET nome_cliente = %s, cpf = %s, email = %s, telefone = %s WHERE idClientes = %s' #UPDATE
-    valores = (nome_atlz, cpf_atlz, email_atlz, telefone_atlz, id_usuario)
+    comando = f'UPDATE cliente SET nome = %s, cpf = %s, telefone = %s, email = %s, is_desconto = %s WHERE id = %s' #UPDATE
+    valores = (nome_atlz, cpf_atlz, telefone_atlz, email_atlz, desconto_atlz, id_usuario)
     cursor.execute(comando, valores)
     conexao.commit() # Edita o banco de dados
     conexao.close()
@@ -163,7 +181,7 @@ def pesquisar_cliente():
         database = 'bd_livraria',
     )
     cursor = conexao.cursor(prepared=True)
-    comando = f'SELECT * FROM clientes WHERE nome_cliente LIKE %s' #READ
+    comando = f'SELECT * FROM cliente WHERE nome LIKE %s' #READ
     valores = ('%' + pesquisar_nome + '%',)
     cursor.execute(comando, valores)
     resultado = cursor.fetchall() # Ler o banco de dados
@@ -187,7 +205,7 @@ def remover_cliente():
         database = 'bd_livraria',
     )
     cursor = conexao.cursor(prepared=True)
-    comando = f'DELETE FROM clientes WHERE idClientes = %s' # DELETE
+    comando = f'DELETE FROM cliente WHERE id = %s' # DELETE
     valores = (id,)
     cursor.execute(comando, valores)
     conexao.commit() # Edita o banco de dados
@@ -196,7 +214,6 @@ def remover_cliente():
     return pagina_remover_cliente()
 
 #==============================================================================#
-
 
 @app.route("/listar_all_clientes_admin.html")
 def pagina_listarAllClientes():
@@ -213,7 +230,7 @@ def exibirClientes():
     )
     
     cursor = conexao.cursor()
-    sql = f'SELECT * FROM clientes' #READ
+    sql = f'SELECT * FROM cliente' #READ
     cursor.execute(sql)
     resultado = cursor.fetchall() # Ler o banco de dados
     conexao.close()
@@ -235,7 +252,9 @@ def cadastrar_livro():
 def submit_livro():
     nome = request.form['nome_livro']
     preco = request.form['preco_livro']
+    local  = request.form['local_fabric']
     qtd_livro = request.form['quantidade_livro']
+    categoria = request.form['categoria_livro']
 
     conexao = mysql.connector.connect(
         host = 'localhost',
@@ -245,8 +264,8 @@ def submit_livro():
     )
     
     cursor = conexao.cursor(prepared=True)
-    sql = f'INSERT INTO livros (nome_livro, preço, quantidade) VALUES (%s, %s, %s)'
-    valores = (nome, preco, qtd_livro)
+    sql = f'INSERT INTO livro (id_categoria, nome, preco, local_fabricacao, quantidade_estoq) VALUES (%s, %s, %s, %s, %s)'
+    valores = (categoria, nome, preco, local, qtd_livro)
     cursor.execute(sql, valores)
     conexao.commit()
     conexao.close()
@@ -264,7 +283,9 @@ def alterar_cadastro_livro():
     id_livro = request.form['id']
     nome_atlz = request.form['nome_atlzd']
     preco_atlz = request.form['preco_atlzd']
+    local_atlz  = request.form['local_fabric_atlz']
     qtd_atlz = request.form['quantidade_atlzd']
+    categoria_atlz = request.form['categoria_livro_atlz']
 
 
     conexao = mysql.connector.connect(
@@ -274,8 +295,8 @@ def alterar_cadastro_livro():
         database = 'bd_livraria',
     )
     cursor = conexao.cursor(prepared=True)
-    comando = f'UPDATE livros SET nome_livro = %s, preço = %s, quantidade = %s WHERE id_livro = %s' #UPDATE
-    valores = (nome_atlz, preco_atlz, qtd_atlz, id_livro)
+    comando = f'UPDATE livro SET id_categoria = %s, nome = %s, preco = %s, local_fabricacao = %s, quantidade_estoq = %s WHERE id = %s' #UPDATE
+    valores = (categoria_atlz, nome_atlz, preco_atlz, local_atlz, qtd_atlz, id_livro)
     cursor.execute(comando, valores)
     conexao.commit() # Edita o banco de dados
     conexao.close()
@@ -299,7 +320,7 @@ def pesquisar_livros():
         database = 'bd_livraria',
     )
     cursor = conexao.cursor(prepared=True)
-    comando = f'SELECT * FROM livros WHERE nome_livro LIKE %s' #READ
+    comando = f'SELECT * FROM livro WHERE nome LIKE %s' #READ
     valores = ('%' + pesquisar_nome + '%',)
     cursor.execute(comando, valores)
     resultado = cursor.fetchall() # Ler o banco de dados
@@ -324,7 +345,7 @@ def remover_livro():
         database = 'bd_livraria',
     )
     cursor = conexao.cursor(prepared=True)
-    comando = f'DELETE FROM livros WHERE id_livro = %s' # DELETE
+    comando = f'DELETE FROM livro WHERE id = %s' # DELETE
     valores = (id,)
     cursor.execute(comando, valores)
     conexao.commit() # Edita o banco de dados
@@ -349,7 +370,7 @@ def exibirLivros():
     )
     
     cursor = conexao.cursor()
-    sql = f'SELECT * FROM livros' #READ
+    sql = f'SELECT * FROM livro' #READ
     cursor.execute(sql)
     resultado = cursor.fetchall() # Ler o banco de dados
     conexao.close()
@@ -372,8 +393,8 @@ def exibirRelatorio():
     )
     
     cursor = conexao.cursor()
-    sql_1 = f'SELECT * FROM clientes'
-    sql_2 = f'SELECT * FROM livros'
+    sql_1 = f'SELECT * FROM cliente'
+    sql_2 = f'SELECT * FROM livro'
     cursor.execute(sql_1)
     clientes = cursor.fetchall() # Ler o banco de dados
 
@@ -385,11 +406,11 @@ def exibirRelatorio():
     qtd_clientes = len(clientes) # pega a quantidade de elementos(as pessoas cadastradas) dentro da lista
     qtd_livros_diferente = len(livros)
 
-    valor_total = sum(coluna[2] * coluna[3] for coluna in livros)# pega todos os valores das colunas 2(preço) e 3(quantidade), realiza a multiplicação (preço x quantidade), linha por linha,
+    valor_total = sum(coluna[3] * coluna[5] for coluna in livros)# pega todos os valores das colunas 2(preço) e 3(quantidade), realiza a multiplicação (preço x quantidade), linha por linha,
                                                                  # e depois soma tudo para ter o valor total do estoque
     valor_total = round(valor_total, 2)
 
-    total_livros = sum(coluna[3] for coluna in livros) # Soma todos os valores da coluna [3]
+    total_livros = sum(coluna[5] for coluna in livros) # Soma todos os valores da coluna [3]
     
 
 

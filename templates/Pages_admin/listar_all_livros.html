@@ -95,8 +95,10 @@
             <thead>
                 <tr>
                     <th>ID</th>
+                    <th>Categoria</th>
                     <th>Nome</th>
                     <th>Preço</th>
+                    <th>Local Fabricação</th>
                     <th>Quantidade</th>
                 </tr>
             </thead>
@@ -104,9 +106,18 @@
                 {% for livros in livro %}
                     <tr>
                         <td>{{ livros[0] }}</td>
-                        <td>{{ livros[1] }}</td>
-                        <td>R$ {{ livros[2] }}</td>
-                        <td>{{ livros[3] }}</td>
+                        <td>{% if livros[1] == 1 %}
+                                Fantasia
+                            {%elif livros[1] == 2%}
+                                Ficção Científica
+                            {%elif livros[1] == 3%}
+                                Educação
+                            {% endif %}
+                        </td>
+                        <td>{{ livros[2] }}</td>
+                        <td>R$ {{ livros[3]|round(2) }}</td>
+                        <td>{{ livros[4] }}</td>
+                        <td>{{ livros[5] }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
