@@ -27,27 +27,35 @@ def login_usuario():
     )
     
     cursor = conexao.cursor(prepared=True)
-    sql = f'SELECT * FROM cliente WHERE nome = %s AND cpf = %s '
+    sql = f'SELECT * FROM Cliente WHERE nome = %s AND cpf = %s '
     valores = (nome, senha)
     cursor.execute(sql, valores)
     resultado = cursor.fetchall() # Ler o banco de dados
-    conexao.close()
 
     if(nome == 'admin' and senha == 'admin'): # Se for o admin logando, mande ele para o painel de admin
         return render_template("homepage_admin.html")
-    else:
-        if resultado:
+    elif resultado:
         # Login bem sucedido
-            return render_template("homepage_cliente.html")
-        else:
-        # Login mal sucedido
-            return render_template("tela_login.html")
-
+        return render_template("homepage_cliente.html")
+    cursor = conexao.cursor(prepared=True)
+    sql = f'SELECT * FROM Vendedor WHERE nome = %s AND cpf = %s '
+    valores = (nome, senha)
+    cursor.execute(sql, valores)
+    resultado = cursor.fetchall()
+    conexao.close()
+    if resultado:
+        # Login bem sucedido
+            return render_template("homepage_vendedor.html") 
+    else:
+    # Login mal sucedido
+        return render_template("tela_login.html")
+        
+    
     
 #==============================================================================#
-@app.route("/Cadastre-se.html") #CREATE
+@app.route("/cadastro-cliente") #CREATE
 def pagina_cadastrarCliente():
-    return render_template("Cadastre-se.html")
+    return render_template("cadastro-cliente")
 
 #envio feito pelo cliente, na pagina de login
 @app.route('/submit_cliente', methods=['POST'])
@@ -71,7 +79,7 @@ def submit_cliente():
     )
 
     cursor = conexao.cursor(prepared=True)
-    sql = f'INSERT INTO cliente (nome, cpf, telefone, email, is_desconto) VALUES (%s, %s, %s, %s, %s)'
+    sql = f'INSERT INTO Cliente (nome, cpf, telefone, email, is_desconto) VALUES (%s, %s, %s, %s, %s)'
     valores = (name, cpf, telefone, email, desconto)
     cursor.execute(sql, valores)
     conexao.commit()
