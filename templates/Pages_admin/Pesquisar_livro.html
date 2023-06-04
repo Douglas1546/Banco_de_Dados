@@ -34,7 +34,22 @@
     
     <div class="pesquisar">
         <form method="POST" action="/pesquisar_livro">
-            <input type="text" required name="nome_livro" placeholder="Nome do livro"><button type="submit">Pesquisar</button><br>
+            <legend>Pesquisar por nome</legend>
+            <input type="text" name="nome_livro" placeholder="Nome do livro"><br>
+            <legend>Pesquisar pelo preço</legend>
+            <input type="text" name="preco_livro" placeholder="Preço do livro"><br>
+            <legend>Pesquisar pelo local de fabricação</legend>
+            <input type="text" name="local_fabric" placeholder="Local de fabricação"><br>
+            <fieldset>
+                <legend>Pesquisar pela categoria</legend>
+                <select name="categoria_livro">
+                    <option value="0">Nenhum</option>
+                    <option value="1">Fantasia</option>
+                    <option value="2">Ficção científica</option>
+                    <option value="3">Educação</option>
+                </select>
+            </fieldset><br>
+            <button type="submit">Pesquisar</button><br>
         </form>
         <style>
             .pesquisar{
