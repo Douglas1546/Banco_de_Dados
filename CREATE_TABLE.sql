@@ -1,0 +1,16 @@
+CREATE TABLE Cliente (
+    id INT NOT NULL AUTO_INCREMENT,
+    nome VARCHAR(255) NOT NULL,
+    cpf VARCHAR(11) NOT NULL,
+    telefone VARCHAR(14) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE Livro (
+    id INT NOT NULL AUTO_INCREMENT,
+    nome VARCHAR(255) NOT NULL,
+    preco FLOAT NOT NULL,
+    quantidade INT NOT NULL,
+    PRIMARY KEY (id)
+);
