@@ -320,6 +320,9 @@ def pagina_pesquisar_livros():
 @app.route("/pesquisar_livro", methods=['POST'])
 def pesquisar_livros():
     pesquisar_nome = request.form['nome_livro']
+    categoria = request.form['categoria_livro']
+    preco = request.form['preco_livro']
+    local  = request.form['local_fabric']
 
     conexao = mysql.connector.connect(
         host = 'localhost',
@@ -328,9 +331,31 @@ def pesquisar_livros():
         database = 'bd_livraria',
     )
     cursor = conexao.cursor(prepared=True)
-    comando = f'SELECT * FROM livro WHERE nome LIKE %s' #READ
-    valores = ('%' + pesquisar_nome + '%',)
-    cursor.execute(comando, valores)
+    
+    comando = f'SELECT * FROM livro WHERE 1=1'
+    valores = []
+
+    # Adicionar critérios de pesquisa à consulta e à lista de valores
+    if pesquisar_nome:
+        comando += f' AND nome LIKE %s'
+        valores.append('%' + pesquisar_nome + '%')
+
+    if categoria != '0':
+        comando += f' AND id_categoria = %s'
+        valores.append(categoria)
+
+    if preco:
+        comando += f' AND ROUND(preco, 2) = %s'
+        valores.append(preco)
+
+    if local:
+        comando += f' AND local_fabricacao LIKE %s'
+        valores.append('%' + local + '%')
+
+    # Executar a consulta com os critérios de pesquisa
+    cursor = conexao.cursor()
+    cursor.execute(comando, tuple(valores))
+
     resultado = cursor.fetchall() # Ler o banco de dados
     conexao.close()
 
