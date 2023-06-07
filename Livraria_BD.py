@@ -324,24 +324,24 @@ def pesquisar_livros():
     )
     cursor = conexao.cursor(prepared=True)
     
-    comando = "SELECT * FROM livro WHERE 1=1"
+    comando = f'SELECT * FROM livro WHERE 1=1'
     valores = []
 
     # Adicionar critérios de pesquisa à consulta e à lista de valores
     if pesquisar_nome:
-        comando += " AND nome LIKE %s"
+        comando += f' AND nome LIKE %s'
         valores.append('%' + pesquisar_nome + '%')
 
     if categoria != '0':
-        comando += " AND id_categoria = %s"
+        comando += f' AND id_categoria = %s'
         valores.append(categoria)
 
     if preco:
-        comando += " AND preco = %s"
+        comando += f' AND ROUND(preco, 2) = %s'
         valores.append(preco)
 
     if local:
-        comando += " AND local_fabricacao LIKE %s"
+        comando += f' AND local_fabricacao LIKE %s'
         valores.append('%' + local + '%')
 
     # Executar a consulta com os critérios de pesquisa
