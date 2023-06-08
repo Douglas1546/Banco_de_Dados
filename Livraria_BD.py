@@ -1,14 +1,14 @@
 import mysql.connector
-from flask import Flask, render_template, request, redirect, url_for
-from datetime import datetime
+from flask import Flask,render_template, request, session, redirect
 
 
 #=============================================#
 
 app = Flask(__name__)
+app.secret_key = '12345'
 
 ##############################################################################################################
-############################################## ROTAS DO USUARIO ##############################################
+############################################## ROTAS DO CLIENTE ##############################################
 ##############################################################################################################
 
 @app.route("/")
@@ -50,6 +50,8 @@ def login_usuario():
         
         if resultado_cliente:
         # Login bem sucedido
+            id_cliente = resultado_cliente[0][0] 
+            session['id_cliente'] = id_cliente  # Armazena o ID do cliente na sessão 'id_cliente'
             conexao.close()
             return render_template("homepage_cliente.html")
         else:
@@ -57,7 +59,7 @@ def login_usuario():
             conexao.close()
             return render_template("tela_login.html")   
     
-    
+# id_cliente = session.get('id_cliente') # Comando pra pegar o ID do cliente logado
 #==============================================================================#
 @app.route("/Cadastre-se.html") #CREATE
 def pagina_cadastrarCliente():
@@ -92,6 +94,42 @@ def submit_cliente():
     conexao.close()
 
     return login_screen()
+#==============================================================================#
+
+@app.route("/Alterar_dados_cliente.html") #UPDATE
+def pagina_alterar_dados_cliente():
+    return render_template("Pages_cliente/Alterar_dados_cliente.html")
+
+@app.route("/alterar_dados_cliente", methods=['POST']) #UPDATE
+def alterar_dados_cliente():
+    id_usuario = session.get('id_cliente') # Comando pra pegar o ID do cliente logado
+    
+    nome_atlz = request.form['nome_atlzd']
+    cpf_atlz = request.form['cpf_atlzd']
+    email_atlz = request.form['email_atlzd']
+    telefone_atlz = request.form['telefone_atlzd']
+    cidade_atlz = request.form['cidade_atlz'].lower()
+
+    if cidade_atlz == 'sousa':
+        desconto_atlz = True
+    else:
+        desconto_atlz = False
+    
+    conexao = mysql.connector.connect(
+        host = 'localhost',
+        user = 'root',
+        password = '@Refri198',
+        database = 'bd_livraria',
+    )
+    cursor = conexao.cursor(prepared=True)
+    comando = f'UPDATE cliente SET nome = %s, cpf = %s, telefone = %s, email = %s, is_desconto = %s WHERE id = %s' #UPDATE
+    valores = (nome_atlz, cpf_atlz, telefone_atlz, email_atlz, desconto_atlz, id_usuario)
+    cursor.execute(comando, valores)
+    conexao.commit() # Edita o banco de dados
+    conexao.close()
+    
+    return pagina_alterar_cadastro_cliente()
+
 #==============================================================================#
 
 ############################################################################################################
@@ -710,6 +748,7 @@ def exibirRelatorio():
     return render_template('Pages_admin/Gerar_relatorio.html', cliente = clientes, total_clientes = qtd_clientes, livro = livros, total_livros_dif = qtd_livros_diferente, livros_total = total_livros, preco_total = valor_total)
 
 #==============================================================================#
+
 @app.route("/Gerar_relatorio_vendedores_admin.html")
 def pagina_gerarRelatorio_vendedor_admin():
     return render_template("Pages_admin/Gerar_relatorio_vendedores_admin.html")

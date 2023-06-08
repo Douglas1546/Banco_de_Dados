@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu site Teste</title>
+    <title>Dados pessoais</title>
 </head>
 <body>
     <style> body{
@@ -13,7 +13,7 @@
     }
     </style>
     <div>
-        <p class="titulo">Livraria Pagina cliente</p>
+        <p class="titulo">Alterar dados pessoais</p>
         <style>
             p{
                 color: white;
@@ -29,18 +29,32 @@
         </style>
     </div>
 
-    <div class="opções">
-        <a href="Alterar_dados_cliente.html">Alterar dados pessoais</a>
-        <a href="/">Sair</a>
-        
-
+    
+    <div class="container">
+        <form method="POST" action="/alterar_dados_cliente">
+            <input type="text" required name="nome_atlzd" placeholder="Nome atualizado"><br>
+            <input type="text" required name="cpf_atlzd" placeholder="CPF atualizado"><br>
+            <input type="text" required name="email_atlzd" placeholder="Email atualizado"><br>
+            <input type="text" required name="telefone_atlzd" placeholder="Telefone atualizado"><br>
+            <input type="text" required name="cidade_atlz" placeholder="Cidade atualizada"><br>
+            <button type="submit">Enviar</button>
+        </form>
         <style>
-            .opções{
-                margin: 2rem;
-                display: grid;
-                grid-template-columns: 1fr 1fr 1fr;
+            .container{
+                text-align: center;
+                font-size: 2rem;
             }
+        </style>
+    </div>
 
+
+    <div class="funcoes">
+        <a href="homepage_cliente.html">Voltar</a>
+        <style>
+            .funcoes{
+                margin: 5rem;
+                text-align: center;
+            }
             a{
                 color: white;
                 background-color: #ef8e7d;
