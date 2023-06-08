@@ -61,6 +61,12 @@ def login_usuario():
     
 # id_cliente = session.get('id_cliente') # Comando pra pegar o ID do cliente logado
 #==============================================================================#
+
+@app.route("/homepage_cliente.html")
+def home_cliente():
+    return render_template("homepage_cliente.html")
+
+#==============================================================================#
 @app.route("/Cadastre-se.html") #CREATE
 def pagina_cadastrarCliente():
     return render_template("Cadastre-se.html")
