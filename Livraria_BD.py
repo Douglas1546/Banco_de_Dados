@@ -204,9 +204,17 @@ def pagina_pesquisar_livros_vendedor():
 def pesquisar_livros_vendedor():
     pesquisar_nome = request.form['nome_livro']
     categoria = request.form['categoria_livro']
-    preco = request.form['preco_livro']
+    preco_min = request.form['preco_min']
+    preco_max = request.form['preco_max']
+    qtd_produtos = request.form['quantidade']
     local  = request.form['local_fabric']
 
+    if preco_min == '':
+        preco_min = '0'
+    
+    if preco_max == '':
+        preco_max = '99999'
+    
     conexao = mysql.connector.connect(
         host = 'localhost',
         user = 'root',
@@ -227,9 +235,14 @@ def pesquisar_livros_vendedor():
         comando += f' AND id_categoria = %s'
         valores.append(categoria)
 
-    if preco:
-        comando += f' AND ROUND(preco, 2) = %s'
-        valores.append(preco)
+    if preco_min and preco_max:
+        comando += f' AND ROUND(preco, 2) BETWEEN %s AND %s'
+        valores.append(preco_min)
+        valores.append(preco_max)
+
+    if qtd_produtos:
+        comando += f' AND quantidade_estoq <= %s'
+        valores.append(qtd_produtos)
 
     if local:
         comando += f' AND local_fabricacao LIKE %s'
@@ -527,9 +540,17 @@ def pagina_pesquisar_livros():
 def pesquisar_livros():
     pesquisar_nome = request.form['nome_livro']
     categoria = request.form['categoria_livro']
-    preco = request.form['preco_livro']
+    preco_min = request.form['preco_min']
+    preco_max = request.form['preco_max']
+    qtd_produtos = request.form['quantidade']
     local  = request.form['local_fabric']
-
+    
+    if preco_min == '':
+        preco_min = '0'
+    
+    if preco_max == '':
+        preco_max = '99999'
+    
     conexao = mysql.connector.connect(
         host = 'localhost',
         user = 'root',
@@ -550,9 +571,14 @@ def pesquisar_livros():
         comando += f' AND id_categoria = %s'
         valores.append(categoria)
 
-    if preco:
-        comando += f' AND ROUND(preco, 2) = %s'
-        valores.append(preco)
+    if preco_min and preco_max:
+        comando += f' AND ROUND(preco, 2) BETWEEN %s AND %s'
+        valores.append(preco_min)
+        valores.append(preco_max)
+
+    if qtd_produtos:
+        comando += f' AND quantidade_estoq <= %s'
+        valores.append(qtd_produtos)
 
     if local:
         comando += f' AND local_fabricacao LIKE %s'

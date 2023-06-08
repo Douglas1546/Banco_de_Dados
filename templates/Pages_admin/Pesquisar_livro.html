@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/static/scripts/script.js"></script>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/css/style.css">
     <title>Cadastrar cliente</title>
 </head>
 <body>
@@ -35,9 +37,9 @@
     <div class="pesquisar">
         <form method="POST" action="/pesquisar_livro">
             <legend>Pesquisar por nome</legend>
-            <input type="text" name="nome_livro" placeholder="Nome do livro"><br>
-            <legend>Pesquisar pelo preço</legend>
-            <input type="number" step="0.01" name="preco_livro" placeholder="Preço do livro"><br>
+            <input type="text" name="nome_livro" placeholder="Nome do livro"><br><br>
+            <legend>Pesquisar por uma faixa de preço</legend>
+            <input type="number" step="0.01" name="preco_min" placeholder="Preço mínimo"><input type="number" step="0.01" name="preco_max" placeholder="Preço máximo"><br><br>
             <legend>Pesquisar pelo local de fabricação</legend>
             <input type="text" name="local_fabric" placeholder="Local de fabricação"><br>
             <fieldset>
@@ -49,6 +51,9 @@
                     <option value="3">Educação</option>
                 </select>
             </fieldset><br>
+            <legend>Pesquisar por quantidade disponível</legend>
+            <input name="quantidade" type="range" id="qtd" min="0" max="100" step="1" oninput="atualizarQtd()" value="100"><br>
+            <span id="qtd_prod">Até 100 Produtos</span><br><br>
             <button type="submit">Pesquisar</button><br>
         </form>
         <style>
