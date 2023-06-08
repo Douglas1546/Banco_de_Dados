@@ -1,5 +1,5 @@
 import mysql.connector
-from flask import Flask, render_template, request, url_for
+from flask import Flask, render_template, request, redirect, url_for
 
 
 #=============================================#
@@ -27,22 +27,35 @@ def login_usuario():
     )
     
     cursor = conexao.cursor(prepared=True)
-    sql = f'SELECT * FROM cliente WHERE nome = %s AND cpf = %s '
+
+    sql_vendedor = f'SELECT * FROM vendedor WHERE nome = %s AND cpf = %s'
     valores = (nome, senha)
-    cursor.execute(sql, valores)
-    resultado = cursor.fetchall() # Ler o banco de dados
-    conexao.close()
+    cursor.execute(sql_vendedor, valores)
+    resultado_vendedor = cursor.fetchall() # Ler o banco de dados
+    
 
     if(nome == 'admin' and senha == 'admin'): # Se for o admin logando, mande ele para o painel de admin
         return render_template("homepage_admin.html")
-    else:
-        if resultado:
+    
+    if resultado_vendedor:
         # Login bem sucedido
+        conexao.close()
+        return render_template("homepage_vendedor.html")
+    else:
+        sql_cliente = f'SELECT * FROM cliente WHERE nome = %s AND cpf = %s'
+        valores = (nome, senha)
+        cursor.execute(sql_cliente, valores)
+        resultado_cliente = cursor.fetchall() # Ler o banco de dados
+        
+        if resultado_cliente:
+        # Login bem sucedido
+            conexao.close()
             return render_template("homepage_cliente.html")
         else:
         # Login mal sucedido
-            return render_template("tela_login.html")
-
+            conexao.close()
+            return render_template("tela_login.html")   
+    
     
 #==============================================================================#
 @app.route("/Cadastre-se.html") #CREATE
@@ -81,6 +94,180 @@ def submit_cliente():
 #==============================================================================#
 
 ############################################################################################################
+############################################ ROTAS DOS VENDEDORES ##########################################
+############################################################################################################
+
+############################################################################################################
+################################################# Clientes #################################################
+############################################################################################################
+
+#==============================================================================#
+@app.route("/homepage_vendedor.html")
+def home_vendedor():
+    return render_template("homepage_vendedor.html")
+#==============================================================================#
+
+@app.route("/Cadastrar_cliente_vendedor.html") #CREATE
+def pagina_cadastrarCliente_vendedor():
+    return render_template("Pages_vendedor/Cadastrar_cliente_vendedor.html")
+
+#envio feito pelo perfil do vendedor
+@app.route('/submit_vendedor', methods=['POST'])
+def submit_vendedor():
+    name = request.form['nome_cliente']
+    cpf = request.form['cpf_cliente']
+    telefone = request.form['telefone_cliente']
+    email = request.form['email_cliente']
+    cidade = request.form['cidade_cliente'].lower()
+
+    if cidade == 'sousa':
+        desconto = True
+    else:
+        desconto = False
+
+    conexao = mysql.connector.connect(
+        host = 'localhost',
+        user = 'root',
+        password = '@Refri198',
+        database = 'bd_livraria',
+    )
+    
+    cursor = conexao.cursor(prepared=True)
+    sql = f'INSERT INTO cliente (nome, cpf, telefone, email, is_desconto) VALUES (%s, %s, %s, %s, %s)'
+    valores = (name, cpf, telefone, email, desconto)
+    cursor.execute(sql, valores)
+    conexao.commit()
+    conexao.close()
+
+    return render_template("Pages_vendedor/Cadastrar_cliente_vendedor.html")
+
+
+#==============================================================================#
+
+@app.route("/Pesquisar_cliente_vendedor.html")
+def pagina_pesquisar_cliente_vendedor():
+    return render_template("Pages_vendedor/Pesquisar_cliente_vendedor.html")
+
+@app.route("/pesquisar_cliente_vend", methods=['POST'])
+def pesquisar_cliente_vendedor():
+    pesquisar_nome = request.form['nome_cliente']
+
+    conexao = mysql.connector.connect(
+        host = 'localhost',
+        user = 'root',
+        password = '@Refri198',
+        database = 'bd_livraria',
+    )
+    cursor = conexao.cursor(prepared=True)
+    comando = f'SELECT * FROM cliente WHERE nome LIKE %s' #READ
+    valores = ('%' + pesquisar_nome + '%',)
+    cursor.execute(comando, valores)
+    resultado = cursor.fetchall() # Ler o banco de dados
+    conexao.close()
+
+    return render_template('Pages_vendedor/Pesquisar_cliente_vendedor.html', cliente = resultado)
+
+#==============================================================================#
+@app.route("/listar_all_clientes_vendedor.html")
+def pagina_listarAllClientes_vendedor():
+    return render_template("Pages_vendedor/listar_all_clientes_vendedor.html")
+
+
+@app.route("/exibir_clientes_vendedor") #READ
+def exibirClientes_vendedor():
+    conexao = mysql.connector.connect(
+        host = 'localhost',
+        user = 'root',
+        password = '@Refri198',
+        database = 'bd_livraria',
+    )
+    
+    cursor = conexao.cursor()
+    sql = f'SELECT * FROM cliente' #READ
+    cursor.execute(sql)
+    resultado = cursor.fetchall() # Ler o banco de dados
+    conexao.close()
+    
+    return render_template('Pages_vendedor/listar_all_clientes_vendedor.html', cliente = resultado)
+
+#==============================================================================#
+############################################################################################################
+################################################## Livros ##################################################
+############################################################################################################
+
+#==============================================================================#
+@app.route("/Pesquisar_livro_vendedor.html")
+def pagina_pesquisar_livros_vendedor():
+    return render_template("Pages_vendedor/Pesquisar_livro_vendedor.html")
+
+@app.route("/pesquisar_livro_vendedor", methods=['POST'])
+def pesquisar_livros_vendedor():
+    pesquisar_nome = request.form['nome_livro']
+    categoria = request.form['categoria_livro']
+    preco = request.form['preco_livro']
+    local  = request.form['local_fabric']
+
+    conexao = mysql.connector.connect(
+        host = 'localhost',
+        user = 'root',
+        password = '@Refri198',
+        database = 'bd_livraria',
+    )
+    cursor = conexao.cursor(prepared=True)
+    
+    comando = f'SELECT * FROM livro WHERE 1=1'
+    valores = []
+
+    # Adicionar critérios de pesquisa à consulta e à lista de valores
+    if pesquisar_nome:
+        comando += f' AND nome LIKE %s'
+        valores.append('%' + pesquisar_nome + '%')
+
+    if categoria != '0':
+        comando += f' AND id_categoria = %s'
+        valores.append(categoria)
+
+    if preco:
+        comando += f' AND ROUND(preco, 2) = %s'
+        valores.append(preco)
+
+    if local:
+        comando += f' AND local_fabricacao LIKE %s'
+        valores.append('%' + local + '%')
+
+    # Executar a consulta com os critérios de pesquisa
+    cursor = conexao.cursor()
+    cursor.execute(comando, tuple(valores))
+
+    resultado = cursor.fetchall() # Ler o banco de dados
+    conexao.close()
+
+    return render_template('Pages_vendedor/Pesquisar_livro_vendedor.html', livro = resultado)
+
+#==============================================================================#
+@app.route("/listar_all_livros_vendedor.html")
+def pagina_listarAllLivros_vendedor():
+    return render_template("Pages_vendedor/listar_all_livros_vendedor.html")
+
+@app.route("/exibir_livros_vendedor") #READ
+def exibirLivros_vendedor():
+    conexao = mysql.connector.connect(
+        host = 'localhost',
+        user = 'root',
+        password = '@Refri198',
+        database = 'bd_livraria',
+    )
+    
+    cursor = conexao.cursor()
+    sql = f'SELECT * FROM livro' #READ
+    cursor.execute(sql)
+    resultado = cursor.fetchall() # Ler o banco de dados
+    conexao.close()
+    
+    return render_template('Pages_vendedor/listar_all_livros_vendedor.html', livro = resultado)
+#==============================================================================#
+
+############################################################################################################
 ############################################## ROTAS DO ADMIN ##############################################
 ############################################################################################################
 
@@ -90,9 +277,36 @@ def submit_cliente():
 
 #==============================================================================#
 @app.route("/homepage_admin.html")
-def home():
+def home_admin():
     return render_template("homepage_admin.html")
 #==============================================================================#
+
+@app.route("/Cadastrar_vendedor_admin.html")
+def pagina_cadastrarVendedor_admin():
+    return render_template("Pages_admin/Cadastrar_vendedor_admin.html")
+
+@app.route('/cadastro_vendedor', methods=['POST'])
+def cadastro_vendedor_admin():
+    nome = request.form['nome_vendedor']
+    cpf = request.form['cpf_vendedor']
+    telefone = request.form['telefone_vendedor']
+    email = request.form['email_vendedor']
+
+    conexao = mysql.connector.connect(
+        host = 'localhost',
+        user = 'root',
+        password = '@Refri198',
+        database = 'bd_livraria',
+    )
+    
+    cursor = conexao.cursor(prepared=True)
+    sql = f'INSERT INTO vendedor (nome, cpf, telefone, email) VALUES (%s, %s, %s, %s)'
+    valores = (nome, cpf, telefone, email)
+    cursor.execute(sql, valores)
+    conexao.commit()
+    conexao.close()
+
+    return render_template("Pages_admin/Cadastrar_vendedor_admin.html")
 
 
 #==============================================================================#
