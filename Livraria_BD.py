@@ -134,7 +134,7 @@ def alterar_dados_cliente():
     conexao.commit() # Edita o banco de dados
     conexao.close()
     
-    return pagina_alterar_cadastro_cliente()
+    return pagina_alterar_dados_cliente()
 
 #==============================================================================#
 
