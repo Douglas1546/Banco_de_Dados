@@ -1,5 +1,6 @@
 import mysql.connector
 from flask import Flask, render_template, request, redirect, url_for
+from datetime import datetime
 
 
 #=============================================#
@@ -280,6 +281,33 @@ def exibirLivros_vendedor():
     return render_template('Pages_vendedor/listar_all_livros_vendedor.html', livro = resultado)
 #==============================================================================#
 
+@app.route("/Gerar_relatorio_vendedores.html")
+def pagina_gerarRelatorio_vendedor():
+    return render_template("Pages_vendedor/Gerar_relatorio_vendedores.html")
+
+@app.route("/exibir_relatorio_vendedor" , methods=['POST'])
+def gerarRelatorio_vendedor():
+    id_vend = request.form['id_vendedor']
+    data_i = request.form['data_inicial']
+    data_f = request.form['data_final'] 
+
+    conexao = mysql.connector.connect(
+        host = 'localhost',
+        user = 'root',
+        password = '@Refri198',
+        database = 'bd_livraria',
+    )
+    
+    cursor = conexao.cursor()
+    sql = f'CALL relatorio_de_vendas_mensal(%s, DATE(%s), DATE(%s))'
+    valores = (id_vend, data_i, data_f)
+    cursor.execute(sql, valores)
+    resultado = cursor.fetchall()
+    cursor.close()
+    conexao.close()
+
+    return render_template('Pages_vendedor/Gerar_relatorio_vendedores.html', relatorio_vendedor = resultado)
+
 ############################################################################################################
 ############################################## ROTAS DO ADMIN ##############################################
 ############################################################################################################
@@ -544,7 +572,7 @@ def pesquisar_livros():
     preco_max = request.form['preco_max']
     qtd_produtos = request.form['quantidade']
     local  = request.form['local_fabric']
-    
+
     if preco_min == '':
         preco_min = '0'
     
@@ -681,6 +709,33 @@ def exibirRelatorio():
 
     return render_template('Pages_admin/Gerar_relatorio.html', cliente = clientes, total_clientes = qtd_clientes, livro = livros, total_livros_dif = qtd_livros_diferente, livros_total = total_livros, preco_total = valor_total)
 
+#==============================================================================#
+@app.route("/Gerar_relatorio_vendedores_admin.html")
+def pagina_gerarRelatorio_vendedor_admin():
+    return render_template("Pages_admin/Gerar_relatorio_vendedores_admin.html")
+
+@app.route("/exibir_relatorio_vendedor_admin" , methods=['POST'])
+def gerarRelatorio_vendedor_admin():
+    id_vend = request.form['id_vendedor']
+    data_i = request.form['data_inicial']
+    data_f = request.form['data_final'] 
+
+    conexao = mysql.connector.connect(
+        host = 'localhost',
+        user = 'root',
+        password = '@Refri198',
+        database = 'bd_livraria',
+    )
+    
+    cursor = conexao.cursor()
+    sql = f'CALL relatorio_de_vendas_mensal(%s, DATE(%s), DATE(%s))'
+    valores = (id_vend, data_i, data_f)
+    cursor.execute(sql, valores)
+    resultado = cursor.fetchall()
+    cursor.close()
+    conexao.close()
+
+    return render_template('Pages_admin/Gerar_relatorio_vendedores_admin.html', relatorio_vendedor = resultado)
 
 #=======================================================================================================#
 if __name__ == "__main__":
