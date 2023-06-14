@@ -1,5 +1,5 @@
 import mysql.connector
-from flask import Flask,render_template, request, session, redirect
+from flask import Flask, flash,render_template, request, session, redirect
 from datetime import datetime
 
 
@@ -788,11 +788,6 @@ def gerarRelatorio_vendedor_admin():
 #==============================================================================#
 @app.route("/Historico_De_Compras.html")
 def pagina_exibir_historico_de_compras_cliente():
-    return render_template("Pages_cliente/Historico_de_Compras.html")
-
-
-@app.route("/historico_de_compras") #READ
-def exibir_historico_de_compras_cliente():
     conexao = mysql.connector.connect(
         host = 'localhost',
         user = 'root',
@@ -806,10 +801,10 @@ def exibir_historico_de_compras_cliente():
     valores = (id_cliente)
     cursor.execute(sql, (valores , ))
     resultados = cursor.fetchall() # Ler o banco de dados
-    print(resultados)
     conexao.close()
-    
-    return render_template("Pages_cliente/Historico_de_Compras.html", resultados = resultados)
+    return render_template("Pages_cliente/Historico_de_Compras.html",  resultados = resultados)
+
+
 
 #=======================================================================================================#
 @app.route("/Realizar_Compra.html")
@@ -896,13 +891,36 @@ def finalizar_compra():
     cursor = conexao.cursor()
     for i in produtos:
         valores = (id_cliente, int(i[1]),int(i[2]),int(i[0]),int(i[3]))
-        print(valores)
-        sql = '''CALL realizar_compra(%d,%d,%d,%d,%d,CURRENT_DATE())'''%valores #READ
-        cursor.execute(sql)
-        conexao.commit()
-    conexao.close()
-    
-    return render_template("Pages_cliente/Realizar_Compra.html")
+        try:
+            sql = '''CALL realizar_compra(%d,%d,%d,%d,%d,CURRENT_DATE())'''%valores #READ
+            cursor.execute(sql)
+            conexao.commit()
+            session["produtos"] = []
+            session["valor_total"] = 0.0
+            sql = f'CALL historico_de_compras(%s)' #READ
+            id_cliente = session.get('id_cliente')
+            valores = (id_cliente)
+            cursor.execute(sql, (valores , ))
+            resultados = cursor.fetchall() # Ler o banco de dados
+            conexao.close()
+            return render_template("Pages_cliente/Historico_de_Compras.html",  resultados = resultados)
+        except:
+            flash("Não tem livros suficiente no estoque!")
+            session["produtos"] = []
+            session["valor_total"] = 0.0
+            cursor = conexao.cursor()
+            sql = f'SELECT * FROM livro' #READ
+            cursor.execute(sql)
+            livros = cursor.fetchall() # Ler o banco de dados
+            sql = f'SELECT * FROM pagamento' #READ
+            cursor.execute(sql)
+            pagamentos = cursor.fetchall() # Ler o banco de dados
+            sql = f'SELECT * FROM vendedor' #READ
+            cursor.execute(sql)
+            vendedores = cursor.fetchall() # Ler o banco de dados
+            conexao.close()
+            return render_template("Pages_cliente/Realizar_Compra.html",livros=livros, pagamentos=pagamentos, vendedores=vendedores)
+        
 
 #=======================================================================================================#
 if __name__ == "__main__":

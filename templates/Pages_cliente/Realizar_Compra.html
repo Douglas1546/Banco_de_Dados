@@ -14,6 +14,17 @@
         background-color: #fef7e1;
     }
     </style>
+    {% block content %}
+    <div class="container">
+        {% for message in get_flashed_messages() %}
+        <div class="alert alert-warning">
+            {{ message }}
+        </div>
+        {% endfor %}
+
+        {% block page_content %}{% endblock %}
+    </div>
+    {% endblock %}
     <div>
         <p class="titulo">Realizar Compra</p>
         <style>
@@ -38,26 +49,12 @@
                 margin: 5rem;
                 text-align: center;
             }
-            a{
-                color: white;
-                background-color: #ef8e7d;
-                padding: 2rem;
-                margin: 30px;
-                text-align: center;
-                font-size: 2rem;
-                text-decoration: none;
-                border-radius: 20px;
-                transition: 0.3s;
-            }
-            a:hover{
-                background-color: #c57667;
-            }
         </style>
         <style>
             a{
                 color: white;
                 background-color: #ef8e7d;
-                padding: 2rem 10rem;
+                padding: 1rem 2rem;
                 margin: 50px;
                 text-align: center;
                 font-size: 2rem;
@@ -107,7 +104,7 @@
                 }
             </style>
             </div>
-            <div class="container">
+            <div class="container" style="margin-top:2rem;">
                 <div class="container">
                     <table class="table table-bordered table-striped">
                         <thead>
@@ -156,13 +153,23 @@
                         font-size: 20px;
                         border: 10px;
                     }
+                    button{
+                        margin-top: 30px;
+                        margin-bottom: 30px;
+                        color: white;
+                        background-color: #ef8e7d;
+                        padding: 0.5rem 2rem;
+                        text-align: center;
+                        font-size: 1.2rem;
+                        text-decoration: none;
+                        border-radius: 20px;
+                    }
                 </style>
             </div>
             </div>
             <div>
                 <form  method="POST" action="/finalizar-compra">
                     <button type="submit">Finalizar Compra</button>
-
                 <form/>
             </div>
     <style>
