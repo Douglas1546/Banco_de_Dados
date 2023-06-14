@@ -1,5 +1,6 @@
 import mysql.connector
 from flask import Flask,render_template, request, session, redirect
+from datetime import datetime
 
 
 #=============================================#
@@ -13,6 +14,7 @@ app.secret_key = '12345'
 
 @app.route("/")
 def login_screen():
+    session["produtos"] = []
     return render_template("tela_login.html")
 
 @app.route('/login_usuario', methods=['POST'])
@@ -23,8 +25,8 @@ def login_usuario():
     conexao = mysql.connector.connect(
         host = 'localhost',
         user = 'root',
-        password = '@Refri198',
-        database = 'bd_livraria',
+        password = 'password',
+        database = 'livraria',
     )
     
     cursor = conexao.cursor(prepared=True)
@@ -34,7 +36,8 @@ def login_usuario():
     cursor.execute(sql_vendedor, valores)
     resultado_vendedor = cursor.fetchall() # Ler o banco de dados
     
-
+    session["produtos"] = []
+    session["valor_total"] = 0.0
     if(nome == 'admin' and senha == 'admin'): # Se for o admin logando, mande ele para o painel de admin
         return render_template("homepage_admin.html")
     
@@ -88,8 +91,8 @@ def submit_cliente():
     conexao = mysql.connector.connect(
         host = 'localhost',
         user = 'root',
-        password = '@Refri198',
-        database = 'bd_livraria',
+        password = 'password',
+        database = 'livraria',
     )
 
     cursor = conexao.cursor(prepared=True)
@@ -124,8 +127,8 @@ def alterar_dados_cliente():
     conexao = mysql.connector.connect(
         host = 'localhost',
         user = 'root',
-        password = '@Refri198',
-        database = 'bd_livraria',
+        password = 'password',
+        database = 'livraria',
     )
     cursor = conexao.cursor(prepared=True)
     comando = f'UPDATE cliente SET nome = %s, cpf = %s, telefone = %s, email = %s, is_desconto = %s WHERE id = %s' #UPDATE
@@ -173,8 +176,8 @@ def submit_vendedor():
     conexao = mysql.connector.connect(
         host = 'localhost',
         user = 'root',
-        password = '@Refri198',
-        database = 'bd_livraria',
+        password = 'password',
+        database = 'livraria',
     )
     
     cursor = conexao.cursor(prepared=True)
@@ -200,8 +203,8 @@ def pesquisar_cliente_vendedor():
     conexao = mysql.connector.connect(
         host = 'localhost',
         user = 'root',
-        password = '@Refri198',
-        database = 'bd_livraria',
+        password = 'password',
+        database = 'livraria',
     )
     cursor = conexao.cursor(prepared=True)
     comando = f'SELECT * FROM cliente WHERE nome LIKE %s' #READ
@@ -223,8 +226,8 @@ def exibirClientes_vendedor():
     conexao = mysql.connector.connect(
         host = 'localhost',
         user = 'root',
-        password = '@Refri198',
-        database = 'bd_livraria',
+        password = 'password',
+        database = 'livraria',
     )
     
     cursor = conexao.cursor()
@@ -263,8 +266,8 @@ def pesquisar_livros_vendedor():
     conexao = mysql.connector.connect(
         host = 'localhost',
         user = 'root',
-        password = '@Refri198',
-        database = 'bd_livraria',
+        password = 'password',
+        database = 'livraria',
     )
     cursor = conexao.cursor(prepared=True)
     
@@ -312,8 +315,8 @@ def exibirLivros_vendedor():
     conexao = mysql.connector.connect(
         host = 'localhost',
         user = 'root',
-        password = '@Refri198',
-        database = 'bd_livraria',
+        password = 'password',
+        database = 'livraria',
     )
     
     cursor = conexao.cursor()
@@ -338,8 +341,8 @@ def gerarRelatorio_vendedor():
     conexao = mysql.connector.connect(
         host = 'localhost',
         user = 'root',
-        password = '@Refri198',
-        database = 'bd_livraria',
+        password = 'password',
+        database = 'livraria',
     )
     
     cursor = conexao.cursor()
@@ -380,8 +383,8 @@ def cadastro_vendedor_admin():
     conexao = mysql.connector.connect(
         host = 'localhost',
         user = 'root',
-        password = '@Refri198',
-        database = 'bd_livraria',
+        password = 'password',
+        database = 'livraria',
     )
     
     cursor = conexao.cursor(prepared=True)
@@ -416,8 +419,8 @@ def submit_admin():
     conexao = mysql.connector.connect(
         host = 'localhost',
         user = 'root',
-        password = '@Refri198',
-        database = 'bd_livraria',
+        password = 'password',
+        database = 'livraria',
     )
     
     cursor = conexao.cursor(prepared=True)
@@ -452,8 +455,8 @@ def alterar_cadastro_cliente():
     conexao = mysql.connector.connect(
         host = 'localhost',
         user = 'root',
-        password = '@Refri198',
-        database = 'bd_livraria',
+        password = 'password',
+        database = 'livraria',
     )
     cursor = conexao.cursor(prepared=True)
     comando = f'UPDATE cliente SET nome = %s, cpf = %s, telefone = %s, email = %s, is_desconto = %s WHERE id = %s' #UPDATE
@@ -476,8 +479,8 @@ def pesquisar_cliente():
     conexao = mysql.connector.connect(
         host = 'localhost',
         user = 'root',
-        password = '@Refri198',
-        database = 'bd_livraria',
+        password = 'password',
+        database = 'livraria',
     )
     cursor = conexao.cursor(prepared=True)
     comando = f'SELECT * FROM cliente WHERE nome LIKE %s' #READ
@@ -500,8 +503,8 @@ def remover_cliente():
     conexao = mysql.connector.connect(
         host = 'localhost',
         user = 'root',
-        password = '@Refri198',
-        database = 'bd_livraria',
+        password = 'password',
+        database = 'livraria',
     )
     cursor = conexao.cursor(prepared=True)
     comando = f'DELETE FROM cliente WHERE id = %s' # DELETE
@@ -524,8 +527,8 @@ def exibirClientes():
     conexao = mysql.connector.connect(
         host = 'localhost',
         user = 'root',
-        password = '@Refri198',
-        database = 'bd_livraria',
+        password = 'password',
+        database = 'livraria',
     )
     
     cursor = conexao.cursor()
@@ -558,8 +561,8 @@ def submit_livro():
     conexao = mysql.connector.connect(
         host = 'localhost',
         user = 'root',
-        password = '@Refri198',
-        database = 'bd_livraria',
+        password = 'password',
+        database = 'livraria',
     )
     
     cursor = conexao.cursor(prepared=True)
@@ -590,8 +593,8 @@ def alterar_cadastro_livro():
     conexao = mysql.connector.connect(
         host = 'localhost',
         user = 'root',
-        password = '@Refri198',
-        database = 'bd_livraria',
+        password = 'password',
+        database = 'livraria',
     )
     cursor = conexao.cursor(prepared=True)
     comando = f'UPDATE livro SET id_categoria = %s, nome = %s, preco = %s, local_fabricacao = %s, quantidade_estoq = %s WHERE id = %s' #UPDATE
@@ -626,8 +629,8 @@ def pesquisar_livros():
     conexao = mysql.connector.connect(
         host = 'localhost',
         user = 'root',
-        password = '@Refri198',
-        database = 'bd_livraria',
+        password = 'password',
+        database = 'livraria',
     )
     cursor = conexao.cursor(prepared=True)
     
@@ -678,8 +681,8 @@ def remover_livro():
     conexao = mysql.connector.connect(
         host = 'localhost',
         user = 'root',
-        password = '@Refri198',
-        database = 'bd_livraria',
+        password = 'password',
+        database = 'livraria',
     )
     cursor = conexao.cursor(prepared=True)
     comando = f'DELETE FROM livro WHERE id = %s' # DELETE
@@ -702,8 +705,8 @@ def exibirLivros():
     conexao = mysql.connector.connect(
         host = 'localhost',
         user = 'root',
-        password = '@Refri198',
-        database = 'bd_livraria',
+        password = 'password',
+        database = 'livraria',
     )
     
     cursor = conexao.cursor()
@@ -725,8 +728,8 @@ def exibirRelatorio():
     conexao = mysql.connector.connect(
         host = 'localhost',
         user = 'root',
-        password = '@Refri198',
-        database = 'bd_livraria',
+        password = 'password',
+        database = 'livraria',
     )
     
     cursor = conexao.cursor()
@@ -768,8 +771,8 @@ def gerarRelatorio_vendedor_admin():
     conexao = mysql.connector.connect(
         host = 'localhost',
         user = 'root',
-        password = '@Refri198',
-        database = 'bd_livraria',
+        password = 'password',
+        database = 'livraria',
     )
     
     cursor = conexao.cursor()
@@ -782,7 +785,126 @@ def gerarRelatorio_vendedor_admin():
 
     return render_template('Pages_admin/Gerar_relatorio_vendedores_admin.html', relatorio_vendedor = resultado)
 
+#==============================================================================#
+@app.route("/Historico_De_Compras.html")
+def pagina_exibir_historico_de_compras_cliente():
+    return render_template("Pages_cliente/Historico_de_Compras.html")
+
+
+@app.route("/historico_de_compras") #READ
+def exibir_historico_de_compras_cliente():
+    conexao = mysql.connector.connect(
+        host = 'localhost',
+        user = 'root',
+        password = 'password',
+        database = 'livraria',
+    )
+    
+    cursor = conexao.cursor()
+    sql = f'CALL historico_de_compras(%s)' #READ
+    id_cliente = session.get('id_cliente')
+    valores = (id_cliente)
+    cursor.execute(sql, (valores , ))
+    resultados = cursor.fetchall() # Ler o banco de dados
+    print(resultados)
+    conexao.close()
+    
+    return render_template("Pages_cliente/Historico_de_Compras.html", resultados = resultados)
+
+#=======================================================================================================#
+@app.route("/Realizar_Compra.html")
+def pagina_realizar_compra():
+    conexao = mysql.connector.connect(
+        host = 'localhost',
+        user = 'root',
+        password = 'password',
+        database = 'livraria',
+    )
+    cursor = conexao.cursor()
+    sql = f'SELECT * FROM livro' #READ
+    cursor.execute(sql)
+    livros = cursor.fetchall() # Ler o banco de dados
+    sql = f'SELECT * FROM pagamento' #READ
+    cursor.execute(sql)
+    pagamentos = cursor.fetchall() # Ler o banco de dados
+    sql = f'SELECT * FROM vendedor' #READ
+    cursor.execute(sql)
+    vendedores = cursor.fetchall() # Ler o banco de dados
+    conexao.close()
+    return render_template("Pages_cliente/Realizar_Compra.html",livros=livros, pagamentos=pagamentos, vendedores=vendedores)
+
+
+@app.route("/adicionar-produto",  methods=['POST']) #READ
+def realizar_compra():
+    quantidade = request.form['qtd'] 
+    livro = request.form['livro']
+    pagamento = request.form['pagamento']
+    vendedor = request.form['vendedor']
+    conexao = mysql.connector.connect(
+        host = 'localhost',
+        user = 'root',
+        password = 'password',
+        database = 'livraria',
+    )
+    cursor = conexao.cursor()
+    
+    sql = f'SELECT * FROM livro WHERE id = %s' #READ
+    valores = (livro)
+    cursor.execute(sql, (valores , ))
+    get_livro = cursor.fetchall() # Ler o banco de dados
+    
+    sql = f'SELECT * FROM pagamento WHERE id = %s' #READ
+    valores = (pagamento)
+    cursor.execute(sql, (valores , ))
+    get_pagamento = cursor.fetchall() # Ler o banco de dados
+    
+    sql = f'SELECT * FROM vendedor WHERE id = %s' #READ
+    valores = (vendedor)
+    cursor.execute(sql, (valores , ))
+    get_vendedor = cursor.fetchall() # Ler o banco de dados
+    
+    cursor = conexao.cursor()
+    if 'produtos' in session:
+        session["produtos"] = session.get('produtos') + [[livro, pagamento, vendedor, quantidade, get_livro[0][2], get_pagamento[0][1],  get_vendedor[0][1]]]
+
+    sql = f'SELECT * FROM livro' #READ
+    cursor.execute(sql)
+    livros = cursor.fetchall() # Ler o banco de dados
+    sql = f'SELECT * FROM pagamento' #READ
+    cursor.execute(sql)
+    pagamentos = cursor.fetchall() # Ler o banco de dados
+    sql = f'SELECT * FROM vendedor' #READ
+    cursor.execute(sql)
+    vendedores = cursor.fetchall() # Ler o banco de dados
+    conexao.close()
+    print(session.get('produtos'))
+    session["valor_total"] = session.get('valor_total') + (livros[int(livro)-1][3]*int(quantidade)) 
+    return render_template("Pages_cliente/Realizar_Compra.html",livros=livros, pagamentos=pagamentos, vendedores=vendedores, cart = session.get('produtos'), valorTotal=session.get('valor_total'))
+
+@app.route("/finalizar-compra",  methods=['POST']) #READ
+def finalizar_compra():
+    id_cliente = session.get('id_cliente')
+    produtos = session.get('produtos')
+
+
+    conexao = mysql.connector.connect(
+        host = 'localhost',
+        user = 'root',
+        password = 'password',
+        database = 'livraria',
+    )
+    cursor = conexao.cursor()
+    for i in produtos:
+        valores = (id_cliente, int(i[1]),int(i[2]),int(i[0]),int(i[3]))
+        print(valores)
+        sql = '''CALL realizar_compra(%d,%d,%d,%d,%d,CURRENT_DATE())'''%valores #READ
+        cursor.execute(sql)
+        conexao.commit()
+    conexao.close()
+    
+    return render_template("Pages_cliente/Realizar_Compra.html")
+
 #=======================================================================================================#
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True,port=5000)
 #=======================================================================================================#
